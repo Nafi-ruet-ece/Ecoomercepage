@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f2f5;
+      padding: 20px;
+    }
+
+    .signup-container {
+      background: #ffffff;
+      padding: 40px 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .signup-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .signup-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .signup-header p {
+      font-size: 14px;
+      color: #65676b;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333333;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 14px;
+      border: 1px solid #ccd0d5;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #1877f2;
+      box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.2);
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1877f2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 6px;
+    }
+
+    .btn-register:hover:not(:disabled) {
+      background-color: #166fe5;
+    }
+
+    .btn-register:disabled {
+      background-color: #93bcf8;
+      cursor: not-allowed;
+    }
+
+    .switch-link {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #65676b;
+    }
+
+    .switch-link a {
+      color: #1877f2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .switch-link a:hover {
+      text-decoration: underline;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.4;
+      text-align: left;
+      display: none;
+      word-break: break-word;
+    }
+
+    .message.error {
+      background-color: #fde8e8;
+      color: #c81e1e;
+      border: 1px solid #f8b4b4;
+    }
+
+    .message.success {
+      background-color: #e7f7ed;
+      color: #0e7039;
+      border: 1px solid #a3e0b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <div class="signup-header">
+      <h1>Create an Account</h1>
+      <p>Sign up to get started</p>
+    </div>
+
+    <form id="signupForm" action="/signup" method="POST">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" placeholder="Enter your age" min="1" max="150" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required>
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn-register">Register</button>
+      <div id="message" class="message"></div>
+
+      <p class="switch-link">Already have an account? <a href="/">Log In</a></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+    const message = document.getElementById('message');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showMessage(type, text) {
+      message.className = `message ${type}`;
+      message.textContent = text;
+      message.style.display = 'block';
+    }
+
+    function hideMessage() {
+      message.style.display = 'none';
+      message.textContent = '';
+      message.className = 'message';
+    }
+
+    // Display URL error parameter if present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+      showMessage('error', decodeURIComponent(urlParams.get('error')));
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      hideMessage();
+
+      const name = form.name.value.trim();
+      const age = form.age.value.trim();
+      const email = form.email.value.trim();
+      const password = form.password.value;
+
+      if (!name) {
+        showMessage('error', 'Please enter your Name.');
+        form.name.focus();
+        return;
+      }
+      if (!age) {
+        showMessage('error', 'Please enter your Age.');
+        form.age.focus();
+        return;
+      }
+      if (!email) {
+        showMessage('error', 'Please enter your Email.');
+        form.email.focus();
+        return;
+      }
+      if (!password) {
+        showMessage('error', 'Please enter your Password.');
+        form.password.focus();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering...';
+
+      try {
+        const response = await fetch('/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, age, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          showMessage('success', 'Registration successful! Redirecting to login...');
+          setTimeout(() => {
+            window.location.href = data.redirect || '/';
+          }, 800);
+        } else {
+          showMessage('error', data.error || 'Failed to sign up. Please try again.');
+        }
+      } catch (err) {
+        showMessage('error', 'An error occurred while connecting to the server. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
+      }
+    });
+  </script>
+</body>
+</html>
