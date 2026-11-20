@@ -4,23 +4,23 @@ const path = require('path');
 
 // Import modular routes
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware 1: Parse incoming URL-encoded form submissions (HTML form posts)
+// Middleware: Parse incoming URL-encoded form submissions and JSON bodies
 app.use(express.urlencoded({ extended: true }));
-
-// Middleware 2: Parse incoming JSON payloads (AJAX/Fetch requests)
 app.use(express.json());
 
-// Middleware 3: Serve static assets (HTML, CSS, images, client-side JS) from the "public" folder
+// Serve static assets from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Mount routes: All authentication and initial page routes
+// Mount routes: Authentication and E-Commerce storefront
 app.use('/', authRoutes);
+app.use('/', productRoutes);
 
-// Start listening for incoming network requests
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });

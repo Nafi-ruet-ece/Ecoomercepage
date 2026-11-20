@@ -110,3 +110,4 @@ exports.loginUser = async (req, res) => {
     return res.redirect('/?error=' + encodeURIComponent('Server error during login.'));
   }
 };
+
